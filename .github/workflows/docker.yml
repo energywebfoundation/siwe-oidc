@@ -3,8 +3,6 @@ name: Publish Docker
 on:
   push:
     branches: [ main ]
-  release:
-    types: [published, created, edited]
 
 jobs:
   build:
