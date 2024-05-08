@@ -10,14 +10,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
     - name: Build and push image
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: spruceid/siwe_oidc
+        name: ghcr.io/energywebfoundation/siwe_oidc
         username: ${{ github.actor }}
-        password: ${{ secrets.GH_PACKAGE_PUSH_TOKEN }}
+        password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
         tag_names: true
         tag_semver: true
         snapshot: true
+        buildargs: PROJECT_ID=${{ secrets.PROJECT_ID }}
