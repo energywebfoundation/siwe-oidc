@@ -1,4 +1,3 @@
-ARG PROJECT_ID=""
 FROM clux/muslrust:stable as chef
 WORKDIR /siwe-oidc
 RUN cargo install cargo-chef
@@ -32,7 +31,7 @@ RUN cargo build --release
 FROM alpine
 ARG PROJECT_ID
 ENV PROJECT_ID=${PROJECT_ID}
-COPY --from=builder /siwe-oidd/target/x86_64-unknown-linux-musl/release/siwe-oidc /usr/local/bin/
+COPY --from=builder /siwe-oidc/target/x86_64-unknown-linux-musl/release/siwe-oidc /usr/local/bin/
 WORKDIR /siwe-oidc
 RUN mkdir -p ./static
 COPY --from=node_builder /siwe-oidc/static/ ./static/
