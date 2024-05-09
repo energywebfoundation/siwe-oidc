@@ -1,3 +1,4 @@
+ARG PROJECT_ID=""
 FROM clux/muslrust:stable as chef
 WORKDIR /siwe-oidc
 RUN cargo install cargo-chef
@@ -7,14 +8,15 @@ COPY ./src/ ./src/
 COPY ./Cargo.lock ./
 COPY ./Cargo.toml ./
 COPY ./siwe-oidc.toml ./
-RUN cargo chef prepare  --recipe-path recipe.json
+RUN cargo chef prepare --recipe-path recipe.json
 
 FROM chef as dep_cacher
 COPY --from=dep_planner /siwe-oidc/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 
 FROM node:16-alpine as node_builder
-ENV PROJECT_ID=""
+ARG PROJECT_ID
+ENV PROJECT_ID=${PROJECT_ID}
 ADD --chown=node:node ./static /siwe-oidc/static
 ADD --chown=node:node ./js/ui /siwe-oidc/js/ui
 WORKDIR /siwe-oidc/js/ui
@@ -28,7 +30,9 @@ COPY --from=dep_planner /siwe-oidc/ ./
 RUN cargo build --release
 
 FROM alpine
-COPY --from=builder /siwe-oidc/target/x86_64-unknown-linux-musl/release/siwe-oidc /usr/local/bin/
+ARG PROJECT_ID
+ENV PROJECT_ID=${PROJECT_ID}
+COPY --from=builder /siwe-oidd/target/x86_64-unknown-linux-musl/release/siwe-oidc /usr/local/bin/
 WORKDIR /siwe-oidc
 RUN mkdir -p ./static
 COPY --from=node_builder /siwe-oidc/static/ ./static/
