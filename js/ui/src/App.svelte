@@ -8,6 +8,7 @@
 	import { getAccount, signMessage, reconnect, getConnections} from '@wagmi/core';
 	import { SiweMessage } from 'siwe';
 	import Cookies from 'js-cookie';
+	import { type Chain } from 'viem';
 
 	// TODO: REMOVE DEFAULTS:
 	// main.ts will parse the params from the server
@@ -21,7 +22,37 @@
 
 	$: status = 'Not Logged In';
 
-	const chains = [mainnet, arbitrum, polygon];
+	export const volta = {
+		id: 73799,
+		name: 'Volta',
+		network: 'volta',
+		nativeCurrency: {
+			name: 'Volta Token',
+			symbol: 'VT',
+			decimals: 18,
+		},
+		rpcUrls: {
+			public: { http: ['https://volta-rpc.energyweb.org'] },
+			default: { http: ['https://volta-rpc.energyweb.org'] },
+		}
+	} as const satisfies Chain
+	
+	export const ewc = {
+		id: 246,
+		name: 'Energy Web Chain',
+		network: 'ewc',
+		nativeCurrency: {
+			name: 'Energy Web Token',
+			symbol: 'EWT',
+			decimals: 18,
+		},
+		rpcUrls: {
+			public: { http: ['https://rpc.energyweb.org'] },
+			default: { http: ['https://rpc.energyweb.org'] },
+		}
+	} as const satisfies Chain
+
+	const chains = [volta, ewc];
 
 	const config = defaultWagmiConfig({
 		chains,
